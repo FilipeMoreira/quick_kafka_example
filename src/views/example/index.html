@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>Kafka Example with Websockets</title>
+        <style>
+            body {
+                padding: 15px;
+            }
+
+            #ex-number {
+                display: block;
+                width: 50%;
+                padding: 8px
+            }
+
+            #submit {
+                display: block;
+                width: 25%;
+                margin-top: 12px;
+                margin-bottom: 24px;
+                padding: 8px;
+                color: #fff;
+                background-color: #333;
+                border: none;
+                border-radius: 3px;
+            }
+        </style>
+        <script src="/public/jquery.js"></script>
+        <script src="/public/socket-io.js"></script>
+    </head>
+    <body>
+        <h2>Is your number a prime number?</h2>
+        <div>
+            <input type="number" id="ex-number" name="ex-number" placeholder="Type a number and check if it's a prime number..." />
+            <button id="submit">Is it?</button>
+        </div>
+        <hr />
+
+        <ul id="response-list">
+
+        </ul>
+
+        <script>
+            function webSocketInvoke() {
+                var socket = io('http://localhost:3000');
+                socket.on('event', (data) => {
+                    console.log(data)
+                    document.getElementById("response-list").innerHTML += `<li>Number: ${data.key} 
+                        | Is it prime? ${data.value} </li>`
+                });
+            }
+            webSocketInvoke();
+
+            $(document).ready(function() {
+                $("#submit").click(function() {
+                    $.post("http://localhost:3000/example", 
+                        { "number": $("#ex-number").val() },
+                        function(data) {
+                            console.log(data);
+                        }
+                    );
+                });
+            });
+        </script>
+
+    </body>
+</html>
